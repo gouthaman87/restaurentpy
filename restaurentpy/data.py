@@ -11,6 +11,7 @@ class ReviewData:
         '''
         self.path = path
         
+        
     def read_review(self, pat: str):
         '''
         The function to read files
@@ -18,7 +19,7 @@ class ReviewData:
         Args:
             pat (str): The type of file to read (e.g. xlsx)
         '''
-        if self.pat in ['xlsx']:
+        if pat in ['xlsx']:
             files = os.listdir(self.path)
             
             # print("Reading From:", self.path)
