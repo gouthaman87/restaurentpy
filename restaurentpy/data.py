@@ -1,28 +1,63 @@
 import pandas as pd
 import os
+import tqdm
+import logging
+logger = logging.getLogger(__name__)
 
 class ReviewData:
-    def __init__(self, path: str) -> None:
-        '''
+    def __init__(self, path: str, pat: str) -> None:
+        """"
         Initializes to read review data
         
         Args:
             path (str): The file path where data saved
-        '''
+            pat (str) : The type of file to read (e.g. xlsx)
+        """
         self.path = path
+        self.pat = pat
+        self.df = None
         
+    def read_review(self):
+        """
+        The function to read review files
         
-    def read_review(self, pat: str):
-        '''
-        The function to read files
+        Returns:
+            DataFrame: The pandas DataFrame (Review DataFrame)
+        """
+        # List to store the data frames
+        self.df = []
         
-        Args:
-            pat (str): The type of file to read (e.g. xlsx)
-        '''
-        if pat in ['xlsx']:
-            files = os.listdir(self.path)
-            
-            # print("Reading From:", self.path)
-            # df = pd.read_excel(self.path)
-        return files
+        # Get all the files in the folder
+        files = os.listdir(self.path)
         
+        for file in tqdm.tqdm(files):
+            if file.endswith(self.pat): # Filter files based on the pat
+                file_path = os.path.join(self.path, file)
+                logger.info("Reading File: ", file_path)
+                self.df.append(pd.read_excel(file_path))
+                
+        # Concatenate DataFrames along rows
+        self.df = pd.concat(self.df, axis=0, ignore_index=True)
+        
+        return self.df
+    
+    def etl_review(self):
+        """
+        The function to do ETL on review data
+
+        Returns:
+            DataFrame: The pandas DataFrame
+        """
+        df = self.read_review()
+        
+        # Select columns need for Analysis
+        df = df.loc[:,["review_datetime_utc", "review_text", "review_rating"]]
+        
+        # Get Month year from datetime column
+        df['calendar_date'] = pd.to_datetime(df['review_datetime_utc']).apply(lambda x: x.strftime('%B-%Y')) 
+        df = df[["calendar_date", "review_text", "review_rating"]]
+        
+        # Drop Duplicates
+        df = df.drop_duplicates()
+        
+        return df
