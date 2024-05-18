@@ -1,8 +1,6 @@
 import pandas as pd
 import os
-import tqdm
 import logging
-logger = logging.getLogger(__name__)
 
 class ReviewData:
     def __init__(self, path: str, pat: str) -> None:
@@ -30,10 +28,10 @@ class ReviewData:
         # Get all the files in the folder
         files = os.listdir(self.path)
         
-        for file in tqdm.tqdm(files):
+        for file in files:
             if file.endswith(self.pat): # Filter files based on the pat
                 file_path = os.path.join(self.path, file)
-                logger.info("Reading File: ", file_path)
+                logging.info("Reading File: ", file_path)
                 self.df.append(pd.read_excel(file_path))
                 
         # Concatenate DataFrames along rows
