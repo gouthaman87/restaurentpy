@@ -26,6 +26,9 @@ spellchecker = "^0.4"
 pyspellchecker = "^0.8.1"
 textblob = "^0.18.0.post0"
 gensim = "^4.3.2"
+scipy = "^1.13.0"
+wikipedia = "^1.4.0"
+statsmodels = "^0.14.2"
 
 
 [tool.poetry.group.dev.dependencies]
