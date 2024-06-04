@@ -16,7 +16,16 @@ class RunPipeline:
         self.topic = topic
 
     def run_pipeline(self):
+        """Running pipeline for topic model
+        - Cleaning reviews.
+        - Calculate sentiment score.
+        - Assign user defined topics.
+
+        Returns:
+            Data Frame: The final data frame with sentiment & topics for reviews
+        """
         # Read Data
+        print(f"Reading Data ...")
         df = self.data.etl_review()
         
         # Get the number of rows
@@ -28,7 +37,7 @@ class RunPipeline:
         print("Identify language for reviews ...")
         df['lang'] = df.review_text.map(lambda x: self.translate.get_language(x))
         
-        # Extract English & Danish Reviews
+        # Extract English, Arabic & Danish Reviews
         # TODO: Later we must use all the reviews and then need to translate
         filtered_indices = df['lang'].str.contains('en|de|ar')
         df = df.loc[filtered_indices, ]
@@ -76,7 +85,4 @@ class RunPipeline:
         print(f"Number of rows Final Data: {num_rows}")
 
         return df_final
-        
-        
-        
         
