@@ -7,7 +7,7 @@ class TopicModel:
     def __init__(self):
         pass
     
-    def user_defined_topic_model(self, documents: list, model: str, topic: list):
+    def user_defined_topic_model(self, rev_number: list, documents: list, model: str, topic: list):
         # Load a pre-trained BERT model for embedding the documents
         model = SentenceTransformer(model)
         
@@ -24,7 +24,7 @@ class TopicModel:
         custom_topics = self.assign_custom_topics(embeddings, topic_embedding_dict)
         
         df_topic = pd.DataFrame({
-            'translate_review': documents,
+            'review_number': rev_number,
             'Topic': custom_topics
         })
         

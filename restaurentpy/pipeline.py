@@ -19,8 +19,13 @@ class RunPipeline:
         # Read Data
         df = self.data.etl_review()
         
+        # Get the number of rows
+        num_rows = df.shape[0]
+        print(f"Number of rows of Raw Data: {num_rows}")
+        
         # Identify / Detect the language of the text
-        logging.info("Identify language for reviews ...")
+        # logging.info("Identify language for reviews ...")
+        print("Identify language for reviews ...")
         df['lang'] = df.review_text.map(lambda x: self.translate.get_language(x))
         
         # Extract English & Danish Reviews
@@ -29,29 +34,46 @@ class RunPipeline:
         df = df.loc[filtered_indices, ]
         
         # Translate non english reviews
-        logging.info("Translate Reviews ...")
+        # logging.info("Translate Reviews ...")
+        print("Translate Reviews ...")
         df['translate_review'] = df.apply(lambda row: self.translate.translate(row['lang'], row['review_text']), axis=1)
         
         # Remove shorter reviews
-        logging.info("Remove Shorter Reviews ...")
+        # logging.info("Remove Shorter Reviews ...")
+        print("Remove Shorter Reviews ...")
         df = df.loc[df['translate_review'].str.len() > 8]
-        logging.info(f'Number of Reviews: {df.shape[0]}')
+        logging.info(f'Number of Reviews after cleaning: {df.shape[0]}')
         
         # Cleaning emojis
-        logging.info("Cleaning emojis in reviews ...")
+        # logging.info("Cleaning emojis in reviews ...")
+        print("Cleaning emojis in reviews ...")
         df['translate_review'] = df['translate_review'].apply(lambda x: clean(x, no_emoji=True))
         
         # Calculate Sentiment
+        print("Calculate sentiment scores ...")
         df['sentiment_score'] = df['translate_review'].apply(self.sentiment.analyze_sentiment)
         df['sentiment_type'] = df['sentiment_score'].apply(self.sentiment.categories_sentiment)
+        df['review_number'] = df.index + 1
         
         # Fit Defined Topics Model (embedding algorithm)
+        print("Find toipcs in reviews ...")
         documents = list(df.translate_review.values)
-        df_topic = self.topic_model.user_defined_topic_model(documents=documents, 
+        review_number = list(df.review_number.values)
+        df_topic = self.topic_model.user_defined_topic_model(rev_number=review_number,
+                                                             documents=documents, 
                                                              model=self.model, 
                                                              topic=self.topic)
         
-        df_final = pd.merge(df, df_topic, on='translate_review')
+        # Get the number of rows
+        num_rows = df_topic.shape[0]
+        print(f"Number of rows Topic Data: {num_rows}")
+        
+        df_final = pd.merge(df, df_topic, on='review_number')
+        df_final = df_final.drop('review_number', axis=1)
+        
+        # Get the number of rows
+        num_rows = df_final.shape[0]
+        print(f"Number of rows Final Data: {num_rows}")
 
         return df_final
         
