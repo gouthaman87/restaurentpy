@@ -1,4 +1,3 @@
-from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import pandas as pd
