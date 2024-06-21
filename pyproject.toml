@@ -17,6 +17,7 @@ numpy = "1.26.2"
 cleantext = "^1.1.4"
 openpyxl = "^3.1.4"
 clean-text = "^0.6.0"
+ollama = "^0.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
