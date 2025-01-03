@@ -1,0 +1,9 @@
+pandas==1.5.3
+langdetect==1.0.9
+deep-translator==1.8.3
+bertopic==0.10.0
+sentence-transformers==2.2.2
+textblob==0.17.1
+clean-text==0.6.0
+openpyxl==3.1.2
+numpy==1.26.4
