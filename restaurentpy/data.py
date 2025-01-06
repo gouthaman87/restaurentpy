@@ -56,7 +56,9 @@ class ReviewData:
         df['calendar_date'] = pd.to_datetime(df['review_datetime_utc']).apply(lambda x: x.strftime('%B-%Y')) 
         df = df[['branch', "calendar_date", "review_text", "review_rating"]]
         
+        df['review_number'] = df.index + 1
+        
         # Drop Duplicates
-        df = df.drop_duplicates()
+        # df = df.drop_duplicates()
         
         return df
