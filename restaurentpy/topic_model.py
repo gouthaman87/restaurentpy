@@ -24,7 +24,7 @@ class TopicModel:
         custom_topics = self.assign_custom_topics(embeddings, topic_embedding_dict)
         
         df_topic = pd.DataFrame({
-            'review_number': rev_number,
+            'review_id': rev_number,
             'Topic': custom_topics
         })
         
