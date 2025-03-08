@@ -53,13 +53,15 @@ class RunPipeline:
         print("STEP 06: Calculate sentiment scores ...")
         df_etl['sentiment_score'] = df_etl['translate_review'].apply(self.sentiment.analyze_sentiment)
         df_etl['sentiment_type'] = df_etl['sentiment_score'].apply(self.sentiment.categories_sentiment)
-        df_etl = df_etl.drop(columns=['branch', 'calendar_date', 'review_text', 'review_rating'])
+        df_etl = df_etl.drop(columns=['branch', 'review_text', 'review_rating'])
         
         # 07. Fit Defined Topics Model (embedding algorithm) ----
         print("STEP 07: Find topics in reviews ...")
         documents = list(df_etl.translate_review.values)
         review_number = list(df_etl.review_id.values)
+        calendar_dates = list(df_etl.calendar_date.values)
         df_topic = self.topic_model.user_defined_topic_model(rev_number=review_number,
+                                                             review_dates=calendar_dates,
                                                              documents=documents, 
                                                              model=self.model, 
                                                              topic=self.topic)
@@ -69,8 +71,8 @@ class RunPipeline:
         
         # 08. Create Final Data ----
         print(f"STEP 08: Creating Final Data ----")
-        df_final = pd.merge(df_raw, df_etl, on='review_id', how='left')
-        df_final = pd.merge(df_final, df_topic, on='review_id', how='left')
+        df_final = pd.merge(df_raw, df_etl, on=['review_id', 'calendar_date'], how='left')
+        df_final = pd.merge(df_final, df_topic, on=['review_id', 'calendar_date'], how='left')
        
         # Get the number of rows
         print(f"Number of rows Final Data: {df_final.shape[0]}")
