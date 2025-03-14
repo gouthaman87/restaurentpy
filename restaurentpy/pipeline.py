@@ -53,7 +53,7 @@ class RunPipeline:
         print("STEP 06: Calculate sentiment scores ...")
         df_etl['sentiment_score'] = df_etl['translate_review'].apply(self.sentiment.analyze_sentiment)
         df_etl['sentiment_type'] = df_etl['sentiment_score'].apply(self.sentiment.categories_sentiment)
-        df_etl = df_etl.drop(columns=['branch', 'review_text', 'review_rating'])
+        df_etl = df_etl.drop(columns=['branch', 'review_text', 'review_rating', 'author_link'])
         
         # 07. Fit Defined Topics Model (embedding algorithm) ----
         print("STEP 07: Find topics in reviews ...")
