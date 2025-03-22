@@ -48,13 +48,16 @@ class ReviewData:
         """
         df = self.read_review()
         
-        # Select columns need for Analysis
-        df = df.loc[:,['name', 'review_id', "review_datetime_utc", "review_text", "review_rating"]]
+        # Select columns needed for Analysis
+        df = df.loc[:, ['name', 'review_id', "review_datetime_utc", "review_text", 
+                        "review_rating", "author_link"]]
         df['branch'] = df['name']
         
         # Get Month year from datetime column
-        df['calendar_date'] = pd.to_datetime(df['review_datetime_utc']).apply(lambda x: x.strftime('%B-%Y')) 
-        df = df[['review_id', 'branch', "calendar_date", "review_text", "review_rating"]]
+        df['calendar_date'] = pd.to_datetime(df['review_datetime_utc']).apply(
+            lambda x: x.strftime('%B-%Y')) 
+        df = df[['review_id', 'branch', "calendar_date", "review_text", 
+                 "review_rating", "author_link"]]
         
         # Drop Duplicates
         df = df.drop_duplicates()
